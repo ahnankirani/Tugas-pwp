@@ -1,0 +1,44 @@
+{
+  "home": {
+    "title": "Monitoring Garis Pantai Palu",
+    "location": "Teluk Palu, Sulawesi Tengah",
+    "description": "Analisis perubahan garis pantai sebelum dan sesudah tsunami 2018 menggunakan Google Earth Engine."
+  },
+  "background": {
+    "title": "Latar Belakang",
+    "paragraphs": [
+      "Tsunami Palu 2018 menyebabkan perubahan signifikan pada garis pantai.",
+      "Analisis ini menggunakan NDWI dan citra Landsat 8."
+    ]
+  },
+  "dataMethods": {
+    "title": "Data & Metode",
+    "dataUsedTitle": "Data yang digunakan",
+    "dataUsed": ["Landsat 8", "JRC Water"],
+    "toolsTitle": "Tools",
+    "tools": ["Google Earth Engine", "Leaflet"],
+    "methodsTitle": "Metode",
+    "methods": ["NDWI", "Change Detection"]
+  },
+  "hasil": {
+    "title": "Hasil Analisis",
+    "mapTitle": "Peta Interaktif",
+    "geeAppUrl": "https://ee-ahnankiranimeishinta.projects.earthengine.app/view/pwpm6",
+    "timeSeriesTitle": "Time Series NDWI",
+    "timeSeriesDesc": "Grafik perubahan NDWI sepanjang tahun 2018.",
+    "perubahanTitle": "Perubahan Garis Pantai",
+    "perubahanDesc": "Terjadi abrasi dan akresi signifikan setelah tsunami."
+  },
+  "discussion": {
+    "title": "Diskusi",
+    "paragraphs": ["Perubahan garis pantai dipengaruhi oleh tsunami."]
+  },
+  "conclusion": {
+    "title": "Kesimpulan",
+    "paragraphs": ["Tsunami berdampak besar terhadap morfologi pantai."]
+  },
+  "geoai": {
+    "title": "GeoAI",
+    "paragraphs": ["GEE mempermudah analisis spasial skala besar."]
+  }
+}
