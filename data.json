@@ -1,51 +1,130 @@
 {
   "home": {
-    "title": "Monitoring Garis Pantai Palu",
-    "location": "Teluk Palu, Sulawesi Tengah",
+    "title": [
+      "Monitoring Dinamika Garis Pantai Pasca Bencana Tsunami di Palu Menggunakan NDWI dan Google Earth Engine", 
+      "dengan menggunakan Citra Satelit Landsat 8 Collection 2 Tier 1 Level-2"
+    ],
+    "location": "Wilayah Palu dan Donggala Sulawesi Tengah",
     "description": "Analisis perubahan garis pantai sebelum dan sesudah tsunami 2018 menggunakan Google Earth Engine."
   },
   "background": {
     "title": "Latar Belakang",
     "paragraphs": [
-      "Tsunami Palu 2018 menyebabkan perubahan signifikan pada garis pantai.",
-      "Analisis ini menggunakan NDWI dan citra Landsat 8."
+      "Pada 28 September 2018, gempa bumi berkekuatan M7.5 mengguncang wilayah Sulawesi Tengah dan memicu tsunami dahsyat yang menghantam pesisir Teluk Palu. Gelombang yang datang menghancurkan kawasan permukiman, infrastruktur, dan mengubah morfologi garis pantai secara drastis hanya dalam hitungan menit. Bencana ini tercatat sebagai salah satu tsunami paling destruktif di Indonesia dalam dua dekade terakhir dengan korban lebih dari 4.000 jiwa.",
+      "Perubahan garis pantai akibat tsunami berdampak langsung pada tata ruang wilayah, ekosistem pesisir, dan keselamatan masyarakat yang akan kembali menghuni kawasan tersebut. Pemetaan perubahan secara akurat menjadi kebutuhan mendesak untuk mendukung proses rekonstruksi berbasis data.",
+      "Pemantauan menggunakan citra satelit multitemporal memberikan solusi efisien dan mampu mencakup area luas, bersifat objektif, reproducible, dan dapat dilakukan tanpa survei lapangan yang mahal maupun berbahaya. Dengan memanfaatkan NDWI (Normalized Difference Water Index) pada citra Landsat 8, batas antara air dan daratan dapat diekstraksi secara otomatis untuk periode sebelum dan sesudah bencana."
+    ],
+    "whyImportantTitle": "Mengapa Ini Hal Ini Penting?",
+    "whyImportant": [
+      "Identifikasi zona abrasi kritis sebagai dasar kebijakan rekonstruksi dan relokasi permukiman",
+      "Dokumentasi perubahan geomorfologi pesisir pasca bencana untuk keperluan ilmiah dan kebencanaan",
+      "Penyediaan data spasial yang akurat bagi perencanaan tata ruang wilayah pesisir (RTRW)",
+      "Pemahaman dampak bencana terhadap ekosistem pesisir termasuk mangrove dan habitat laut"
     ]
   },
   "dataMethods": {
     "title": "Data & Metode",
-    "dataUsedTitle": "Data yang digunakan",
-    "dataUsed": ["Landsat 8", "JRC Water"],
-    "toolsTitle": "Tools",
-    "tools": ["Google Earth Engine", "Leaflet"],
-    "methodsTitle": "Metode",
-    "methods": ["NDWI", "Change Detection"]
-  },
+
+    "dataUsedTitle": "Data dan metode yang digunakan",
+    "dataUsed": [
+      "Landsat 8 C2 T1 L2 (Before): 27 Sep 2017 – 27 Sep 2018, cloud cover < 30%",
+      "Landsat 8 C2 T1 L2 (After) : 27 Okt 2018 – 27 Sep 2019, cloud cover < 30%",
+      "JRC Global Surface Water v1.4 ",
+      "Google Earth Engine"
+    ],
+    "methodUsedTitle": "Metode yang digunakan",
+    "methodUsed": [
+      "Pra-pemrosesan & Cloud Masking — masking awan via QA_PIXEL, konversi Surface Reflectance",
+      "Komposit Median — gabungan scene valid dengan fungsi median",
+      "Perhitungan NDWI — (Green − NIR) / (Green + NIR), threshold > 0 = air",
+      "Filling & Noise Cleaning — filling via JRC + operasi morfologi (focal_max/min)",
+      "Change Detection — deteksi abrasi dan akresi via operasi logika biner",
+    "Time Series NDWI — rata-rata NDWI per bulan sepanjang 2018"
+  ]
+},
   "hasil": {
     "title": "Hasil Analisis",
-    "mapTitle": "Peta Interaktif",
+    "mapTitle": "Peta Interaktif Perubahan Garis Pantai",
     "geeAppUrl": "https://ee-ahnankiranimeishinta.projects.earthengine.app/view/pwpm6",
-    "timeSeriesTitle": "Time Series NDWI",
-    "timeSeriesDesc": "Grafik perubahan NDWI sepanjang tahun 2018.",
     "perubahanTitle": "Perubahan Garis Pantai",
     "perubahanDesc": "Terjadi abrasi dan akresi signifikan setelah tsunami."
   },
   "discussion": {
     "title": "Diskusi",
-    "paragraphs": ["Perubahan garis pantai dipengaruhi oleh tsunami."]
+    "paragraphs": [
+      "Hasil analisis menunjukkan tsunami memengaruhi bentuk dan sebaran garis pantai di Teluk Palu.",
+       "Pada citra after, perubahan wilayah pesisir dapat dilihat dari bertambah atau berkurangnya area yang terklasifikasi sebagai air maupun daratan.",
+        "NDWI juga memperlihatkan perubahan spektral yang konsisten dengan perubahan kondisi fisik permukaan."
+    ]
   },
   "conclusion": {
     "title": "Kesimpulan",
-    "paragraphs": ["Tsunami berdampak besar terhadap morfologi pantai."]
+    "paragraphs": [
+      "Tsunami 28 September 2018 menyebabkan perubahan garis pantai yang dramatis di kawasan Teluk Palu, Sulawesi Tengah. Analisis NDWI multitemporal berbasis Landsat 8 berhasil mendeteksi perubahan tersebut secara jelas dan terukur.",
+      "Abrasi mendominasi dengan area terdampak yang jauh lebih luas dibanding akresi, menghasilkan net loss daratan pesisir yang signifikan. Time series NDWI bulanan mampu menangkap sinyal perubahan pasca-tsunami secara konsisten sejak Oktober 2018.",
+      "Pendekatan berbasis Google Earth Engine terbukti efektif — efisien, dapat direplikasi, dan tidak memerlukan infrastruktur komputasi lokal yang mahal. Metode ini berpotensi besar untuk diterapkan dalam pemantauan dampak bencana pesisir di wilayah lain di Indonesia."
+    ],
+    "recommendationsTitle": "Rekomendasi",
+    "recommendations": [
+      "Melakukan pemantauan berkala (tahunan) garis pantai Palu pasca-rekonstruksi menggunakan metode yang sama untuk mendeteksi perubahan lanjutan",
+      "Integrasikan citra Sentinel-2 (resolusi 10 m) untuk hasil pemetaan yang lebih detail dan akurat",
+      "Jadikan output peta abrasi dan akresi sebagai input wajib dalam dokumen RTRW dan rencana mitigasi bencana wilayah pesisir",
+      "Mengembangkan sistem pemantauan NDWI otomatis berbasis GEE untuk deteksi dini perubahan garis pantai ekstrem secara real-time"
+    ]
   },
   "geoai": {
-    "title": "GeoAI",
-    "paragraphs": ["GEE mempermudah analisis spasial skala besar."]
+    "title": "GeoAI dalam Analisis Ini",
+    "paragraphs": [
+      "GeoAI — perpaduan antara kecerdasan buatan, komputasi cloud, dan data geospasial — menjadi fondasi utama analisis ini. Google Earth Engine sebagai platform GeoAI memungkinkan pemrosesan puluhan scene citra satelit secara paralel di cloud, sesuatu yang tidak mungkin dilakukan secara manual maupun di komputer lokal biasa dalam skala waktu yang relevan.",
+      "Cloud masking otomatis berbasis QA_PIXEL memanfaatkan model klasifikasi piksel bawaan Landsat yang dibangun dengan pendekatan machine learning. JRC Global Surface Water — produk GeoAI dari Google dan EU Joint Research Centre — menyediakan referensi historis 30 tahun tentang distribusi air global tanpa perlu survei lapangan. Operasi morfologi spasial yang diterapkan pada seluruh area AOI secara serentak hanya dimungkinkan oleh arsitektur komputasi terdistribusi GEE."
+    ],
+    "withoutGeoAITitle": "Apa yang Tidak Bisa Dilakukan Tanpa GeoAI?",
+    "withoutGeoAI": [
+      {
+        "tanpa": "Analisis hanya 1–2 scene citra secara manual",
+        "dengan": "Komposit otomatis dari seluruh scene valid dalam periode satu tahun"
+      },
+      {
+        "tanpa": "Digitasi garis pantai manual membutuhkan berminggu-minggu",
+        "dengan": "Ekstraksi otomatis berbasis NDWI selesai dalam hitungan menit"
+      },
+      {
+        "tanpa": "Tidak ada referensi historis distribusi air global",
+        "dengan": "JRC GSW sebagai baseline air 30 tahun langsung tersedia"
+      },
+      {
+        "tanpa": "Analisis terbatas pada satu titik waktu",
+        "dengan": "Time series bulanan sepanjang tahun dapat dihitung sekaligus"
+      },
+      {
+        "tanpa": "Memerlukan software GIS berlisensi dan hardware mahal",
+        "dengan": "Seluruh analisis gratis dan berjalan di browser via GEE"
+      }
+    ]
   },
   "references": {
     "title": "Referensi",
     "items": [
-      "Landsat 8: https://landsat.usgs.gov/landsat-8",
-      "JRC Water: https://data.jrc.ec.europa.eu/dataset/jrc-water"
+      {
+        "label": "Landsat 8 — USGS",
+        "url": "https://landsat.usgs.gov/landsat-8"
+      },
+      {
+        "label": "JRC Global Surface Water — EU Joint Research Centre",
+        "url": "https://data.jrc.ec.europa.eu/dataset/jrc-water"
+      },
+      {
+        "label": "Google Earth Engine — Platform Documentation",
+        "url": "https://earthengine.google.com"
+      },
+      {
+        "label": "McFeeters, S.K. (1996). The use of the Normalized Difference Water Index (NDWI) in the delineation of open water features. International Journal of Remote Sensing, 17(7), 1425–1432.",
+        "url": "https://doi.org/10.1080/01431169608948714"
+      },
+      {
+        "label": "BNPB — Data Bencana Gempa & Tsunami Sulawesi Tengah 2018",
+        "url": "https://www.bnpb.go.id"
+      }
     ]
   }
 }
