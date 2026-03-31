@@ -40,5 +40,12 @@
   "geoai": {
     "title": "GeoAI",
     "paragraphs": ["GEE mempermudah analisis spasial skala besar."]
+  },
+  "references": {
+    "title": "Referensi",
+    "items": [
+      "Landsat 8: https://landsat.usgs.gov/landsat-8",
+      "JRC Water: https://data.jrc.ec.europa.eu/dataset/jrc-water"
+    ]
   }
 }
