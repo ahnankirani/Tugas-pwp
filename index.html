@@ -4,233 +4,222 @@
   <title>Monitoring Garis Pantai Palu</title>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: linear-gradient(135deg, #eef2f7, #f8fafc);
+
+      /* 🔥 BACKGROUND */
+      background: linear-gradient(-45deg, #60a5fa, #22d3ee, #a78bfa, #f472b6);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+
       color: #2c3e50;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .scroll-down {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 32px;
+      cursor: pointer;
+      color: white;
+      z-index: 1000;
+      animation: bounce 1.5s infinite;
+      transition: opacity 0.3s;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, 12px); }
     }
 
     .container {
       max-width: 1000px;
       margin: auto;
-      padding: 40px 20px;
+      padding: 60px 20px;
     }
 
-    h1 {
-      font-size: 32px;
-      margin-bottom: 10px;
-    }
+    h1 { font-size: 32px; margin-bottom: 10px; }
 
     h2 {
       margin-bottom: 15px;
-      border-left: 5px solid #3498db;
+      border-left: 5px solid #2563eb;
       padding-left: 10px;
     }
 
-    h3 {
-      margin-top: 20px;
-      margin-bottom: 10px;
-      color: #34495e;
-    }
+    h3 { margin-top: 20px; margin-bottom: 10px; color: #34495e; }
 
-    p {
-      line-height: 1.7;
-      margin-bottom: 10px;
-      color: #555;
-    }
+    p { line-height: 1.7; margin-bottom: 10px; color: #333; }
 
-    ul {
-      padding-left: 20px;
-      margin-bottom: 10px;
-    }
+    ul { padding-left: 20px; margin-bottom: 10px; }
 
-    li {
-      margin-bottom: 5px;
-    }
+    li { margin-bottom: 5px; }
 
+    /* 🔥 FIX PUTIH */
     .box {
-      background: white;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(10px);
+
       padding: 25px;
       margin-bottom: 25px;
       border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       transition: 0.3s;
+
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .box.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .box:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
 
     #map {
-      position: relative;
       width: 100%;
       height: 500px;
       margin-top: 10px;
       border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     }
-
-    /* Legend */
-    .legend {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      background: white;
-      padding: 12px 15px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      font-size: 14px;
-      z-index: 999;
-    }
-
-    .legend span {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      border-radius: 3px;
-    }
-
-    .abrasi { background: red; }
-    .akresi { background: yellow; }
   </style>
 </head>
 
 <body>
+
+<div class="scroll-down" onclick="scrollToContent()">⌄</div>
 
 <div class="container">
   <div id="content-container"></div>
 </div>
 
 <script>
-  function fetchAndRenderData() {
-    fetch('data.json')
-      .then(res => res.json())
-      .then(data => renderContent(data))
-      .catch(err => {
-        document.getElementById('content-container').innerHTML =
-          `<p>Error: ${err.message}</p>`;
-      });
-  }
+function fetchAndRenderData() {
+  fetch('data.json')
+    .then(res => res.json())
+    .then(data => renderContent(data))
+    .catch(err => {
+      document.getElementById('content-container').innerHTML =
+        `<p>Error: ${err.message}</p>`;
+    });
+}
 
-  function renderList(title, items) {
-    if (!items || items.length === 0) return '';
-    return `<p><b>${title}</b></p><ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
-  }
+function renderList(title, items) {
+  if (!items || items.length === 0) return '';
+  return `<p><b>${title}</b></p><ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+}
 
-  function renderParagraphs(paragraphs) {
-    if (!paragraphs) return '';
-    return paragraphs.map(p => `<p>${p}</p>`).join('');
-  }
+function renderParagraphs(paragraphs) {
+  if (!paragraphs) return '';
+  return paragraphs.map(p => `<p>${p}</p>`).join('');
+}
 
-  function renderContent(data) {
-    const container = document.getElementById('content-container');
+function renderContent(data) {
+  const container = document.getElementById('content-container');
 
-    container.innerHTML = `
-      <div class="box">
-        <h1>${data.home.title}</h1>
-        <p><b>Lokasi:</b> ${data.home.location}</p>
-        <p>${data.home.description}</p>
-      </div>
+  container.innerHTML = `
+    <div class="box">
+      <h1>${data.home.title}</h1>
+      <p><b>Lokasi:</b> ${data.home.location}</p>
+      <p>${data.home.description}</p>
+    </div>
 
-      <div class="box">
-        <h2>${data.background.title}</h2>
-        ${renderParagraphs(data.background.paragraphs)}
-        <h2>${data.background.whyImportantTitle}</h2>
-        ${renderList('', data.background.whyImportant)}
-      </div>
+    <div class="box">
+      <h2>${data.background.title}</h2>
+      ${renderParagraphs(data.background.paragraphs)}
+      <h2>${data.background.whyImportantTitle}</h2>
+      ${renderList('', data.background.whyImportant)}
+    </div>
 
-      <div class="box">
-        <h2>${data.dataMethods.title}</h2>
-        ${renderList(data.dataMethods.dataUsedTitle, data.dataMethods.dataUsed)}
-        ${renderList(data.dataMethods.methodUsedTitle, data.dataMethods.methodUsed)}
-      </div>
+    <div class="box">
+      <h2>${data.dataMethods.title}</h2>
+      ${renderList(data.dataMethods.dataUsedTitle, data.dataMethods.dataUsed)}
+      ${renderList(data.dataMethods.methodUsedTitle, data.dataMethods.methodUsed)}
+    </div>
 
-      <div class="box">
-        <h2>${data.hasil.title}</h2>
+    <div class="box">
+      <h2>${data.hasil.title}</h2>
 
-        <h3>${data.hasil.mapTitle}</h3>
-        <div id="map"></div>
+      <h3>${data.hasil.mapTitle}</h3>
+      <div id="map"></div>
 
-        <h3>${data.hasil.timeSeriesTitle}</h3>
-        <p>${data.hasil.timeSeriesDesc}</p>
-        <img src="image/ee-chart.png" alt="Time Series Graph" style="width:100%; border-radius:10px; margin-top:10px;">
-        <img src="image/ee-chart (1).png" alt="Time Series Graph" style="width:100%; border-radius:10px; margin-top:10px;">
+      <h3>${data.hasil.timeSeriesTitle}</h3>
+      <p>${data.hasil.timeSeriesDesc}</p>
+      <img src="image/ee-chart.png" style="width:100%; border-radius:10px; margin-top:10px;">
+      <img src="image/ee-chart (1).png" style="width:100%; border-radius:10px; margin-top:10px;">
 
-        <h3>${data.hasil.perubahanTitle}</h3>
-        <p>${data.hasil.perubahanDesc}</p>
-        <img src="image/ee-chart (2).png" alt="Time Series Graph" style="width:100%; border-radius:10px; margin-top:10px;">
+      <h3>${data.hasil.perubahanTitle}</h3>
+      <p>${data.hasil.perubahanDesc}</p>
+      <img src="image/ee-chart (2).png" style="width:100%; border-radius:10px; margin-top:10px;">
+    </div>
 
-      </div>
+    <div class="box">
+      <h2>${data.discussion.title}</h2>
+      ${renderParagraphs(data.discussion.paragraphs)}
+    </div>
 
-      <div class="box">
-        <h2>${data.discussion.title}</h2>
-        ${renderParagraphs(data.discussion.paragraphs)}
-        <h3>${data.discussion.humanActivities.title}</h3>
-        ${renderParagraphs(data.discussion.humanActivities.description)}
-        <h3>${data.discussion.conflictsAndChallenges.title}</h3>
-        ${renderParagraphs(data.discussion.conflictsAndChallenges.description)}
-      </div>
+    <div class="box">
+      <h2>${data.conclusion.title}</h2>
+      ${renderParagraphs(data.conclusion.paragraphs)}
+    </div>
 
-      <div class="box">
-        <h2>${data.conclusion.title}</h2>
-        ${renderParagraphs(data.conclusion.paragraphs)}
-        <h3>${data.conclusion.recommendationsTitle}</h3>
-        ${renderParagraphs(data.conclusion.recommendations)}
-      </div>
+    <div class="box">
+      <h2>${data.geoAI.title}</h2>
+      ${renderParagraphs(data.geoAI.role.description)}
+    </div>
+  `;
 
-      <div class="box">
-        <h2>${data.geoAI.title}</h2>
-        <h3>${data.geoAI.role.title}</h3>
-        ${renderParagraphs(data.geoAI.role.description)}
-        <h3>${data.geoAI.limitationsWithoutGeoAI.title}</h3>
-        ${renderParagraphs(data.geoAI.limitationsWithoutGeoAI.description)}
-      </div>
+  setTimeout(() => {
+    initMap(data);
+    animateOnScroll();
+  }, 100);
+}
 
-      <div class="box">
-       <h2>${data.references.title}</h2>
-    <ul>
-      ${data.references.items.map(ref => `
-        <li>
-          <a href="${ref.url}" target="_blank">
-            ${ref.label}
-          </a>
-        </li>
-      `).join("")}
-    </ul>
-      </div>
-    `;
+function initMap(data) {
+  document.getElementById('map').innerHTML = `
+    <iframe src="${data.hasil.geeAppUrl}" 
+      style="width:100%; height:550px; border:none;">
+    </iframe>
+  `;
+}
 
-    setTimeout(() => initMap(data), 100);
-  }
+function scrollToContent() {
+  document.querySelector('.container').scrollIntoView({
+    behavior: 'smooth'
+  });
+}
 
-  function initMap(data) {
-    const mapDiv = document.getElementById('map');
+window.addEventListener('scroll', () => {
+  const arrow = document.querySelector('.scroll-down');
+  arrow.style.opacity = window.scrollY > 100 ? 0 : 1;
+});
 
-    mapDiv.innerHTML = `
-      <div style="overflow:hidden; height:500px; border-radius:15px;">
-        <iframe 
-          src="${data.hasil.geeAppUrl}" 
-          style="
-            width:100%;
-            height:550px;
-            margin-top:-50px;
-            border:none;
-          ">
-        </iframe>
-      </div>
-    `;
-  }
+function animateOnScroll() {
+  document.querySelectorAll('.box').forEach((box, i) => {
+    const rect = box.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 100) {
+      setTimeout(() => box.classList.add('show'), i * 100);
+    }
+  });
+}
 
-  fetchAndRenderData();
+window.addEventListener('scroll', animateOnScroll);
+
+fetchAndRenderData();
 </script>
 
 </body>
