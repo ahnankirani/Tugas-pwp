@@ -555,8 +555,17 @@ function parseNumber(value) {
 
 function prettifySeriesLabel(fieldName, fallback) {
   if (!fieldName) return fallback;
+
   const m = String(fieldName).match(/^\[(\d+)\]\[x\]$/);
-  if (m) return `Indikator ${Number(m[1]) + 1}`;
+  if (m) {
+    const index = Number(m[1]);
+
+    if (index === 0) return "Air";
+    if (index === 1) return "Daratan";
+
+    return `Indikator ${index + 1}`; // fallback kalau lebih dari 2
+  }
+
   return fieldName;
 }
 
@@ -626,7 +635,7 @@ async function initCharts() {
               grid: { display: false },
             },
             y: {
-              title: { display: true, text: 'NDWI' },
+              title: { display: true, text: 'Rata-rataNDWI' },
             }
           }
         }
@@ -656,16 +665,16 @@ async function initCharts() {
           labels,
           datasets: [
             {
-              label: prettifySeriesLabel(seriesAField, 'Indikator 1'),
+              label: prettifySeriesLabel(seriesAField, 'Air'),
               data: seriesA,
-              backgroundColor: 'rgba(37, 99, 235, 0.28)',
+              backgroundColor: '#259bc3',
               borderColor: '#2563eb',
               borderWidth: 1,
             },
             {
-              label: prettifySeriesLabel(seriesBField, 'Indikator 2'),
+              label: prettifySeriesLabel(seriesBField, 'Daratan'),
               data: seriesB,
-              backgroundColor: 'rgba(17, 24, 39, 0.18)',
+              backgroundColor: '#f28c4a',
               borderColor: 'rgba(17, 24, 39, 0.55)',
               borderWidth: 1,
             }
@@ -676,7 +685,7 @@ async function initCharts() {
           maintainAspectRatio: false,
           plugins: {
             legend: { display: true },
-            title: { display: true, text: 'Before vs After (perubahan indikator)' },
+            title: { display: true, text: 'Perubahan Luas Air dan Daratan Teluk Palu (ha)' },
             tooltip: { mode: 'index', intersect: false },
           },
           scales: {
@@ -708,7 +717,7 @@ async function initCharts() {
           labels,
           datasets: [
             {
-              label: 'Luas',
+              label: 'Luas (ha)',
               data: values,
               backgroundColor: ['rgba(17, 24, 39, 0.20)', 'rgba(37, 99, 235, 0.24)'],
               borderColor: ['rgba(17, 24, 39, 0.55)', '#2563eb'],
@@ -845,8 +854,10 @@ function renderContent(data) {
       <h2>${data.geoAI.title}</h2>
       <h3>${data.geoAI.role.title}</h3>
       ${renderParagraphs(data.geoAI.role.description)}
+      ${renderList('', data.geoAI.role.list)}
       <h3>${data.geoAI.limitationsWithoutGeoAI.title}</h3>
       ${renderParagraphs(data.geoAI.limitationsWithoutGeoAI.description)}
+      ${renderList('', data.geoAI.limitationsWithoutGeoAI.list)}
     </section>
   `;
 

@@ -22,19 +22,19 @@
     "title": "Data & Metode",
     "dataUsedTitle": "Data yang digunakan",
     "dataUsed": [
-      "Landsat 8 C2 T1 L2 (Before): 27 Sep 2017 – 27 Sep 2018, cloud cover < 30%",
-      "Landsat 8 C2 T1 L2 (After): 27 Okt 2018 – 27 Sep 2019, cloud cover < 30%",
+      "Landsat 8 C2 T1 L2 (Before): 27 Sep 2017 – 27 Sep 2018 dengan cloud cover < 30%",
+      "Landsat 8 C2 T1 L2 (After): 27 Okt 2018 – 27 Sep 2019 dengan cloud cover < 30%",
       "JRC Global Surface Water v1.4",
       "Google Earth Engine"
     ],
     "methodUsedTitle": "Metode yang digunakan",
     "methodUsed": [
-      "Pra-pemrosesan & Cloud Masking — masking awan melalui QA_PIXEL, konversi Surface Reflectance",
-      "Komposit Median — gabungan scene valid dengan fungsi median",
-      "Perhitungan NDWI — (Green − NIR) / (Green + NIR), threshold > 0 = air",
-      "Filling & Noise Cleaning — filling via JRC + operasi morfologi (focal_max/min)",
-      "Change Detection — deteksi abrasi dan akresi via operasi logika biner",
-      "Time Series NDWI — rata-rata NDWI per bulan sepanjang 2018"
+      "Pra-pemrosesan & Cloud Masking untuk masking awan melalui QA_PIXEL, konversi Surface Reflectance",
+      "Komposit Median untuk gabungan scene valid dengan fungsi median",
+      "Perhitungan NDWI dengan persamaan (Green − NIR) / (Green + NIR), threshold > 0 = air",
+      "Filling & Noise Cleaning untuk filling via JRC dan operasi morfologi (focal_max/min)",
+      "Change Detection untuk deteksi abrasi dan akresi via operasi logika biner",
+      "Time Series NDWI untuk analisis rata-rata NDWI per bulan sepanjang 2018"
     ]
   },
   "hasil": {
@@ -73,33 +73,39 @@
     "role": {
       "title": "Peran GeoAI dalam Analisis",
       "description": [
-        "GeoAI berperan dalam mempercepat dan menyederhanakan proses analisis dinamika garis pantai melalui pengolahan data geospasial secara otomatis dan skala besar.",
-        "Dalam penelitian ini, GeoAI dimanfaatkan melalui platform Google Earth Engine untuk mengolah citra satelit multi-temporal.",
-        "Proses seperti masking awan, perhitungan NDWI, klasifikasi air–daratan, hingga analisis perubahan dapat dilakukan secara cepat, konsisten, dan efisien.",
-        "Kemampuan komputasi berbasis cloud memungkinkan analisis dilakukan tanpa keterbatasan perangkat keras lokal."
+        "Pada tugas monitoring kali ini, GeoAI diimplementasikan melalui platform Google Earth Engine (GEE) yang memungkinkan pemrosesan data citra satelit multitemporal secara otomatis dan efisien di skala besar. Dalam hal ini Geo Ai dapat membantu:"
+      ],
+      "list" :  [
+        "Memproses citra satelit Landsat 8 secara otomatis dengan masking awan",
+        "Menghitung NDWI secara algoritmik di area Teluk Palu",
+        "Mengklasifikasikan piksel air dan daratan secara otomatis berdasarkan threshold",
+        "Mendeteksi perubahan garis pantai (abrasi & akresi) secara spasial dan kuantitatif",
+        "Menghitung luas perubahan wilayah (ha)",
+        "Memvisualisasikan time series NDWI"
       ]
     },
     "limitationsWithoutGeoAI": {
       "title": "Keterbatasan Tanpa GeoAI",
       "description": [
-        "Tanpa GeoAI, analisis akan menjadi jauh lebih lambat dan kurang efisien.",
-        "Pengolahan citra harus dilakukan secara manual, terutama untuk data multi-temporal dalam jumlah besar.",
-        "Proses klasifikasi, deteksi perubahan, dan visualisasi tidak dapat dilakukan secara otomatis dan konsisten.",
-        "Hal ini menyulitkan dalam menghasilkan analisis yang cepat, akurat, dan dapat digunakan untuk pengambilan keputusan."
+        "Tanpa bantuan Geo Ai maka akan susah untuk menyelesaikan tugas berikut:"
+      ],"list": [
+      "Memproses ribuan piksel citra satelit dalam hitungan menit",
+      "Membandingkan kondisi before-after secara spasial di area > 7000 ha",
+      "Menjalankan algoritma klasifikasi NDWI, filling piksel kosong, dan change detection secara bersamaan tanpa memerlukan instalasi software"
       ]
     }
   },
   "conclusion": {
     "title": "Kesimpulan",
     "paragraphs": [
-      "Monitoring Dinamika Garis Pantai Pasca Tsunami Palu menggunakan NDWI dan Google Earth Engine menunjukkan bahwa pendekatan penginderaan jauh berbasis satelit sangat efektif untuk memantau perubahan pesisir akibat bencana. Hasil analisis NDWI dari citra Landsat 8 mengungkapkan perubahan signifikan pada garis pantai Teluk Palu setelah tsunami 28 September 2018, mencakup abrasi (hilangnya daratan) di bagian barat dan selatan teluk, serta perubahan morfologi muara sungai. Google Earth Engine terbukti mampu mendukung analisis multitemporal secara efisien dengan cakupan wilayah yang luas. Dampak yang ditimbulkan tidak hanya bersifat fisik, tetapi juga sosial — merusak ekosistem pesisir, mengganggu mata pencaharian masyarakat, serta memicu konflik tata ruang antara pemerintah daerah, masyarakat pesisir, dan pengembang dalam proses rekonstruksi. Oleh karena itu, monitoring semacam ini penting sebagai dasar perencanaan wilayah pesisir yang adaptif, termasuk penataan ulang ruang pesisir dan pemasangan sistem peringatan dini (EWS) untuk mitigasi risiko bencana ke depan."
+      "Monitoring dinamika garis pantai pasca tsunami Palu menggunakan NDWI dan Google Earth Engine menunjukkan bahwa pemanfaatan citra satelit cukup efektif untuk mengamati perubahan wilayah pesisir akibat bencana. Hasil analisis NDWI dari citra Landsat 8 memperlihatkan adanya perubahan yang signifikan pada garis pantai Teluk Palu setelah tsunami 28 September 2018, terutama berupa abrasi di bagian barat dan selatan teluk, serta perubahan morfologi di area muara sungai.",
+      "Penggunaan Google Earth Engine juga mempermudah analisis multitemporal dengan cakupan wilayah yang luas dan proses yang lebih efisien. Dampak yang terjadi tidak hanya terbatas pada perubahan fisik, tetapi juga berdampak pada aspek sosial dan lingkungan, seperti kerusakan ekosistem pesisir, terganggunya mata pencaharian masyarakat, serta munculnya konflik dalam penataan ruang antara pemerintah, masyarakat, dan pihak pengembang selama proses rekonstruksi.",
+      "Oleh karena itu, monitoring seperti ini penting sebagai dasar dalam perencanaan wilayah pesisir yang lebih adaptif, termasuk dalam penataan ulang ruang pesisir serta pengembangan sistem peringatan dini (EWS) guna mengurangi risiko bencana di masa mendatang."
+
     ],
     "recommendationsTitle": "Rekomendasi",
     "recommendations": [
-      "Menggunakan citra satelit dengan resolusi spasial yang lebih tinggi agar detail garis pantai dapat terlihat dengan lebih jelas",
-      "Mengombinasikan data dari berbagai sensor (multi-sensor) sehingga informasi yang diperoleh lebih lengkap dan saling melengkapi",
-      "Melakukan validasi lapangan (ground check) untuk memastikan kesesuaian antara hasil analisis citra dengan kondisi di lapangan",
-      "Memanfaatkan citra Sentinel-2 (resolusi 10 meter) untuk meningkatkan ketelitian dalam identifikasi perubahan garis pantai"
+      "Untuk meningkatkan kualitas analisis perubahan garis pantai, disarankan menggunakan citra satelit dengan resolusi spasial yang lebih tinggi agar detail batas darat dan air dapat teridentifikasi dengan lebih jelas. Selain itu, pemanfaatan data dari berbagai sensor (multi-sensor) juga perlu dipertimbangkan guna memperoleh informasi yang lebih lengkap dan saling melengkapi. Validasi lapangan (ground check) penting dilakukan untuk memastikan bahwa hasil interpretasi citra sesuai dengan kondisi nyata di lapangan. Di samping itu, penggunaan citra Sentinel-2 dengan resolusi 10 meter dapat menjadi alternatif yang lebih akurat dalam mengidentifikasi perubahan garis pantai dibandingkan dengan citra resolusi menengah seperti Landsat."
     ]
   },
   "references": {
