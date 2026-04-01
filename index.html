@@ -843,7 +843,10 @@ function renderContent(data) {
 
     <section class="box" data-section id="geoai">
       <h2>${data.geoAI.title}</h2>
+      <h3>${data.geoAI.role.title}</h3>
       ${renderParagraphs(data.geoAI.role.description)}
+      <h3>${data.geoAI.limitationsWithoutGeoAI.title}</h3>
+      ${renderParagraphs(data.geoAI.limitationsWithoutGeoAI.description)}
     </section>
   `;
 
