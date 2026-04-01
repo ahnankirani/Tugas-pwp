@@ -144,12 +144,13 @@
       <div class="box">
         <h2>${data.background.title}</h2>
         ${renderParagraphs(data.background.paragraphs)}
+        <h2>${data.background.whyImportantTitle}</h2>
+        ${renderList('', data.background.whyImportant)}
       </div>
 
       <div class="box">
         <h2>${data.dataMethods.title}</h2>
         ${renderList(data.dataMethods.dataUsedTitle, data.dataMethods.dataUsed)}
-        ${renderList(data.dataMethods.toolsTitle, data.dataMethods.tools)}
         ${renderList(data.dataMethods.methodsTitle, data.dataMethods.methods)}
       </div>
 
@@ -161,24 +162,50 @@
 
         <h3>${data.hasil.timeSeriesTitle}</h3>
         <p>${data.hasil.timeSeriesDesc}</p>
+        <img src="image/ee-chart.png" alt="Time Series Graph" style="width:100%; border-radius:10px; margin-top:10px;">
+        <img src="image/ee-chart (1).png" alt="Time Series Graph" style="width:100%; border-radius:10px; margin-top:10px;">
 
         <h3>${data.hasil.perubahanTitle}</h3>
         <p>${data.hasil.perubahanDesc}</p>
+        <img src="image/ee-chart (2).png" alt="Time Series Graph" style="width:100%; border-radius:10px; margin-top:10px;">
+
       </div>
 
       <div class="box">
         <h2>${data.discussion.title}</h2>
         ${renderParagraphs(data.discussion.paragraphs)}
+        <h3>${data.discussion.humanActivities.title}</h3>
+        ${renderParagraphs(data.discussion.humanActivities.description)}
+        <h3>${data.discussion.conflictsAndChallenges.title}</h3>
+        ${renderParagraphs(data.discussion.conflictsAndChallenges.description)}
       </div>
 
       <div class="box">
         <h2>${data.conclusion.title}</h2>
         ${renderParagraphs(data.conclusion.paragraphs)}
+        <h3>${data.conclusion.recommendationsTitle}</h3>
+        ${renderParagraphs(data.conclusion.recommendations)}
       </div>
 
       <div class="box">
-        <h2>${data.geoai.title}</h2>
-        ${renderParagraphs(data.geoai.paragraphs)}
+        <h2>${data.geoAI.title}</h2>
+        <h3>${data.geoAI.role.title}</h3>
+        ${renderParagraphs(data.geoAI.role.description)}
+        <h3>${data.geoAI.limitationsWithoutGeoAI.title}</h3>
+        ${renderParagraphs(data.geoAI.limitationsWithoutGeoAI.description)}
+      </div>
+
+      <div class="box">
+       <h2>${data.references.title}</h2>
+    <ul>
+      ${data.references.items.map(ref => `
+        <li>
+          <a href="${ref.url}" target="_blank">
+            ${ref.label}
+          </a>
+        </li>
+      `).join("")}
+    </ul>
       </div>
     `;
 
