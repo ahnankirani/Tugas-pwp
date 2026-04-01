@@ -105,7 +105,8 @@
     ],
     "recommendationsTitle": "Rekomendasi",
     "recommendations": [
-      "Untuk meningkatkan kualitas analisis perubahan garis pantai, disarankan menggunakan citra satelit dengan resolusi spasial yang lebih tinggi agar detail batas darat dan air dapat teridentifikasi dengan lebih jelas. Selain itu, pemanfaatan data dari berbagai sensor (multi-sensor) juga perlu dipertimbangkan guna memperoleh informasi yang lebih lengkap dan saling melengkapi. Validasi lapangan (ground check) penting dilakukan untuk memastikan bahwa hasil interpretasi citra sesuai dengan kondisi nyata di lapangan. Di samping itu, penggunaan citra Sentinel-2 dengan resolusi 10 meter dapat menjadi alternatif yang lebih akurat dalam mengidentifikasi perubahan garis pantai dibandingkan dengan citra resolusi menengah seperti Landsat."
+      "Untuk meningkatkan kualitas analisis perubahan garis pantai, disarankan menggunakan citra satelit dengan resolusi spasial yang lebih tinggi agar detail batas darat dan air dapat teridentifikasi dengan lebih jelas. Selain itu, pemanfaatan data dari berbagai sensor (multi-sensor) juga perlu dipertimbangkan guna memperoleh informasi yang lebih lengkap dan saling melengkapi. Validasi lapangan (ground check) penting dilakukan untuk memastikan bahwa hasil interpretasi citra sesuai dengan kondisi nyata di lapangan.", 
+      "Di samping itu, penggunaan citra Sentinel-2 dengan resolusi 10 meter dapat menjadi alternatif yang lebih akurat dalam mengidentifikasi perubahan garis pantai dibandingkan dengan citra resolusi menengah seperti Landsat."
     ]
   },
   "references": {
