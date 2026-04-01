@@ -1,7 +1,7 @@
 {
   "home": {
     "title": [
-      "Monitoring Dinamika Garis Pantai Pasca Bencana Tsunami di Palu Menggunakan NDWI dan Google Earth Engine dengan Menggunakan Citra Satelit Landsat 8 Collection 2 Tier 1 Level-2"
+      "Monitoring Dinamika Garis Pantai Pasca Bencana Tsunami di Palu Menggunakan NDWI dan Google Earth Engine dengan Citra Satelit Landsat 8 Collection 2 Tier 1 Level-2"
     ],
     "location": "Wilayah Palu dan Donggala Sulawesi Tengah",
     "description": "Analisis perubahan garis pantai sebelum dan sesudah tsunami 2018 menggunakan Google Earth Engine."
@@ -32,7 +32,7 @@
     ],
     "methodUsedTitle": "Metode yang digunakan",
     "methodUsed": [
-      "Pra-pemrosesan & Cloud Masking — masking awan via QA_PIXEL, konversi Surface Reflectance",
+      "Pra-pemrosesan & Cloud Masking — masking awan melalui QA_PIXEL, konversi Surface Reflectance",
       "Komposit Median — gabungan scene valid dengan fungsi median",
       "Perhitungan NDWI — (Green − NIR) / (Green + NIR), threshold > 0 = air",
       "Filling & Noise Cleaning — filling via JRC + operasi morfologi (focal_max/min)",
