@@ -1,20 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Monitoring Garis Pantai Palu</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitoring Dinamika Garis Pantai Palu</title>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
+      min-height: 100%;
+      overflow-x: hidden;
 
-      /* 🔥 BACKGROUND */
-      background: linear-gradient(-45deg, #60a5fa, #22d3ee, #a78bfa, #f472b6);
-      background-size: 400% 400%;
-      animation: gradientBG 12s ease infinite;
+      /* BACKGROUND (animated, glass-friendly) */
+      /* background: linear-gradient(-45deg, #60a5fa, #22d3ee, #a78bfa, #f472b6);
+      background-size: 420% 420%;
+      animation: gradientBG 14s ease infinite; */
 
-      color: #2c3e50;
+      color: #1f2937;
+      background: #f6f7fb;
+    }
+
+    /* subtle grain so gradient looks smoother (cheap, no images) */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.085;
+      mix-blend-mode: overlay;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,0.25) 0,
+          rgba(255,255,255,0.25) 1px,
+          rgba(0,0,0,0.0) 2px,
+          rgba(0,0,0,0.0) 4px
+        );
+    }
+
+    /* spotlight mengikuti cursor (interaktif, tapi tetap ringan) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(700px circle at var(--mx, 50%) var(--my, 15%), rgba(255,255,255,0.18), transparent 60%);
+      mix-blend-mode: overlay;
+      opacity: 0.9;
     }
 
     @keyframes gradientBG {
@@ -25,15 +64,155 @@
 
     .scroll-down {
       position: fixed;
-      top: 20px;
+      top: 76px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 32px;
       cursor: pointer;
-      color: white;
+      color: rgba(17, 24, 39, 0.78);
       z-index: 1000;
       animation: bounce 1.5s infinite;
       transition: opacity 0.3s;
+      user-select: none;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.28);
+    }
+
+    /* scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 4px;
+      width: 100%;
+      z-index: 1100;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+    }
+    .scroll-progress > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: rgba(255,255,255,0.85);
+      transform-origin: left;
+      transition: width 0.06s linear;
+    }
+
+    /* back-to-top button */
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 1100;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 14px;
+      cursor: pointer;
+      color: rgba(17, 24, 39, 0.92);
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .to-top.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .to-top:focus-visible {
+      outline: 2px solid rgba(255,255,255,0.8);
+      outline-offset: 2px;
+    }
+
+    /* topbar (TOC) */
+    .topbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 4px; /* keep progress bar visible */
+      z-index: 1050;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(17,24,39,0.06);
+    }
+    .topbar .brand {
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: rgba(17,24,39,0.92);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .topbar .right {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+    }
+    .toc {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 6px;
+    }
+    .toc a {
+      flex: 0 0 auto;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,24,39,0.10);
+      background: rgba(255,255,255,0.65);
+      color: rgba(17,24,39,0.82);
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .toc a:hover {
+      border-color: rgba(17,24,39,0.18);
+      background: rgba(255,255,255,0.85);
+    }
+    .toc a.active {
+      border-color: rgba(37, 99, 235, 0.28);
+      background: rgba(37, 99, 235, 0.10);
+      color: rgba(17,24,39,0.92);
+    }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(17,24,39,0.12);
+      background: rgba(255,255,255,0.75);
+      color: rgba(17,24,39,0.86);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .read-more:hover {
+      border-color: rgba(17,24,39,0.20);
+      background: rgba(255,255,255,0.90);
+    }
+
+    @media (min-width: 900px) {
+      .topbar {
+        grid-template-columns: auto 1fr;
+        padding: 16px 28px;
+      }
+      .topbar .brand {
+        font-size: 16px;
+      }
+      .toc a {
+        font-size: 14px;
+        padding: 9px 14px;
+      }
     }
 
     @keyframes bounce {
@@ -42,22 +221,30 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 80%;
       margin: auto;
-      padding: 60px 20px;
+      padding: 140px 20px 80px;
+      min-height: 100vh;
+      perspective: 900px;
     }
 
-    h1 { font-size: 32px; margin-bottom: 10px; }
+    h1 {
+      font-size: clamp(28px, 3.1vw, 44px);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      color: rgba(17, 24, 39, 0.95);
+    }
 
     h2 {
       margin-bottom: 15px;
       border-left: 5px solid #2563eb;
       padding-left: 10px;
+      color: rgba(17, 24, 39, 0.92);
     }
 
     h3 { margin-top: 20px; margin-bottom: 10px; color: #34495e; }
 
-    p { line-height: 1.7; margin-bottom: 10px; color: #333; }
+    p { line-height: 1.75; margin-bottom: 10px; color: rgba(17,24,39,0.82); }
 
     ul { padding-left: 20px; margin-bottom: 10px; }
 
@@ -65,7 +252,7 @@
 
     /* 🔥 FIX PUTIH */
     .box {
-      background: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.72);
       backdrop-filter: blur(10px);
 
       padding: 25px;
@@ -74,40 +261,480 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       transition: 0.3s;
 
+      position: relative;
+      transform-style: preserve-3d;
+      will-change: transform;
+
       opacity: 0;
-      transform: translateY(30px);
+      transform:
+        translateY(var(--revealY, 30px))
+        translateY(var(--hoverLift, 0px))
+        rotateX(var(--rx, 0deg))
+        rotateY(var(--ry, 0deg));
+    }
+
+    .box[data-section] {
+      scroll-margin-top: 130px;
     }
 
     .box.show {
       opacity: 1;
-      transform: translateY(0);
+      --revealY: 0px;
     }
 
     .box:hover {
-      transform: translateY(-5px);
+      --hoverLift: -5px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
 
+    .box::before {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at var(--bx, 50%) var(--by, 50%), rgba(37, 99, 235, 0.16), transparent 65%);
+      filter: blur(14px);
+      opacity: 0;
+      transition: opacity 0.35s;
+      z-index: -1;
+    }
+
+    .box:hover::before {
+      opacity: 1;
+    }
+
+    .box:focus-within {
+      outline: 2px solid rgba(255,255,255,0.45);
+      outline-offset: 2px;
+    }
+
+    .box.pop {
+      animation: pop 260ms ease;
+    }
+
+    @keyframes pop {
+      0% { transform:
+        translateY(var(--revealY, 0px))
+        translateY(var(--hoverLift, 0px))
+        rotateX(var(--rx, 0deg))
+        rotateY(var(--ry, 0deg))
+        scale(1);
+      }
+      60% { transform:
+        translateY(var(--revealY, 0px))
+        translateY(var(--hoverLift, 0px))
+        rotateX(var(--rx, 0deg))
+        rotateY(var(--ry, 0deg))
+        scale(1.02);
+      }
+      100% { transform:
+        translateY(var(--revealY, 0px))
+        translateY(var(--hoverLift, 0px))
+        rotateX(var(--rx, 0deg))
+        rotateY(var(--ry, 0deg))
+        scale(1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body { animation: none; }
+      body::before { opacity: 0.55; }
+      body::after { opacity: 0.06; }
+      .scroll-down { animation: none; }
+      .box, .box::before { transition: none; }
+      .box.pop { animation: none; }
+      .scroll-progress > span { transition: none; }
+      .to-top { transition: none; }
+    }
+
+    details {
+      border: 1px solid rgba(17,24,39,0.08);
+      background: rgba(255,255,255,0.55);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 12px;
+    }
+    details > summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: rgba(17,24,39,0.88);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 4px 2px;
+    }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after {
+      content: "▾";
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(17,24,39,0.16);
+      background: rgba(255,255,255,0.55);
+      color: rgba(17,24,39,0.62);
+      font-size: 18px;
+      line-height: 1;
+      user-select: none;
+    }
+    details > summary:hover::after {
+      background: rgba(255,255,255,0.85);
+      border-color: rgba(17,24,39,0.22);
+      color: rgba(17,24,39,0.74);
+    }
+    details[open] > summary::after { content: "▴"; }
+
     #map {
       width: 100%;
-      height: 500px;
+      height: 550px;
       margin-top: 10px;
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    #map iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: 0;
+    }
+
+    .chart-wrap {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    .chart-wrap canvas {
+      width: 100% !important;
+      height: 360px !important;
+      display: block;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .two-col .col {
+      min-width: 0;
+    }
+
+    @media (min-width: 900px) {
+      .two-col {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="scroll-down" onclick="scrollToContent()">⌄</div>
+<div class="scroll-progress" aria-hidden="true"><span id="scrollProgressBar"></span></div>
+
+<header class="topbar" role="navigation" aria-label="Navigasi halaman">
+  <a class="brand" href="#home" aria-label="Ke bagian atas">PWP • Palu</a>
+  <div class="right">
+    <div class="toc" id="toc" aria-label="Daftar bagian"></div>
+  </div>
+</header>
+
+<button class="to-top" id="toTopBtn" type="button" aria-label="Kembali ke atas" title="Kembali ke atas">
+  ↑
+</button>
+
+<div class="scroll-down" onclick="scrollToContent()">&#8595;</div>
 
 <div class="container">
   <div id="content-container"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <script>
+let __charts = {};
+let __revealObserver = null;
+
+function prefersReducedMotion() {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
+function enableSpotlight() {
+  if (prefersReducedMotion()) return;
+
+  const root = document.documentElement;
+  const update = (ev) => {
+    const x = (ev.clientX / Math.max(1, window.innerWidth)) * 100;
+    const y = (ev.clientY / Math.max(1, window.innerHeight)) * 100;
+    root.style.setProperty('--mx', `${x.toFixed(2)}%`);
+    root.style.setProperty('--my', `${y.toFixed(2)}%`);
+  };
+
+  window.addEventListener('pointermove', update, { passive: true });
+}
+
+function enableInteractiveBoxes() {
+  const boxes = document.querySelectorAll('.box');
+  if (!boxes.length) return;
+
+  const reduceMotion = prefersReducedMotion();
+
+  boxes.forEach((box) => {
+    let rafId = 0;
+
+    const onMove = (ev) => {
+      if (reduceMotion) return;
+      const rect = box.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const px = (ev.clientX - rect.left) / rect.width;
+      const py = (ev.clientY - rect.top) / rect.height;
+      const dx = px - 0.5;
+      const dy = py - 0.5;
+
+      const rx = (-dy * 7).toFixed(2);
+      const ry = (dx * 9).toFixed(2);
+
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        box.style.setProperty('--rx', `${rx}deg`);
+        box.style.setProperty('--ry', `${ry}deg`);
+        box.style.setProperty('--bx', `${(px * 100).toFixed(1)}%`);
+        box.style.setProperty('--by', `${(py * 100).toFixed(1)}%`);
+      });
+    };
+
+    const reset = () => {
+      box.style.setProperty('--rx', '0deg');
+      box.style.setProperty('--ry', '0deg');
+    };
+
+    box.addEventListener('pointermove', onMove);
+    box.addEventListener('pointerleave', reset);
+
+    // "pop" feedback saat diklik
+    box.addEventListener('pointerdown', () => {
+      if (reduceMotion) return;
+      box.classList.remove('pop');
+      // force reflow biar animasi bisa ke-trigger ulang
+      void box.offsetWidth;
+      box.classList.add('pop');
+    });
+    box.addEventListener('animationend', () => box.classList.remove('pop'));
+  });
+}
+
+function destroyCharts() {
+  Object.values(__charts).forEach(ch => {
+    try { ch.destroy(); } catch (_) {}
+  });
+  __charts = {};
+}
+
+function parseNumber(value) {
+  if (value === null || value === undefined) return NaN;
+  if (typeof value === 'number') return value;
+  const cleaned = String(value).trim().replace(/,/g, '');
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function prettifySeriesLabel(fieldName, fallback) {
+  if (!fieldName) return fallback;
+  const m = String(fieldName).match(/^\[(\d+)\]\[x\]$/);
+  if (m) return `Indikator ${Number(m[1]) + 1}`;
+  return fieldName;
+}
+
+async function loadCsv(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Gagal load ${url} (${res.status})`);
+  const text = await res.text();
+  const parsed = Papa.parse(text, {
+    header: true,
+    skipEmptyLines: true,
+  });
+  if (parsed.errors && parsed.errors.length) {
+    throw new Error(`Parse error di ${url}: ${parsed.errors[0].message}`);
+  }
+  return parsed;
+}
+
+function showChartError(containerId, message) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = `<p style="margin:0; color:#b91c1c;"><b>Chart error:</b> ${message}</p>`;
+}
+
+async function initCharts() {
+  destroyCharts();
+
+  if (!window.Chart || !window.Papa) {
+    showChartError('ndwiChartWrap', 'Library Chart.js / PapaParse belum kebaca.');
+    return;
+  }
+
+  try {
+    const ndwi = await loadCsv('ee-chart.csv');
+    const ndwiRows = (ndwi.data || []).filter(r => r && (r['system:time_start'] || r.NDWI !== undefined));
+    const ndwiLabels = ndwiRows.map(r => String(r['system:time_start']).trim());
+    const ndwiValues = ndwiRows.map(r => parseNumber(r.NDWI));
+
+    const ndwiCtx = document.getElementById('ndwiChart');
+    if (ndwiCtx) {
+      __charts.ndwi = new Chart(ndwiCtx, {
+        type: 'line',
+        data: {
+          labels: ndwiLabels,
+          datasets: [
+            {
+              label: 'NDWI',
+              data: ndwiValues,
+              borderColor: '#2563eb',
+              backgroundColor: '#fff',
+              tension: 0.25,
+              pointRadius: 3,
+              fill: true,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: 'Time Series NDWI (bulanan)' },
+            tooltip: { mode: 'index', intersect: false },
+          },
+          scales: {
+            x: {
+              ticks: { maxRotation: 0, autoSkip: true },
+              grid: { display: false },
+            },
+            y: {
+              title: { display: true, text: 'NDWI' },
+            }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    showChartError('ndwiChartWrap', e.message);
+  }
+
+  try {
+    const beforeAfter = await loadCsv('ee-chart (1).csv');
+    const fields = (beforeAfter.meta && beforeAfter.meta.fields) ? beforeAfter.meta.fields : [];
+    const labelField = fields[0] || '';
+    const seriesAField = fields[1];
+    const seriesBField = fields[2];
+
+    const rows = (beforeAfter.data || []).filter(r => r && (r[labelField] || r[seriesAField] || r[seriesBField]));
+    const labels = rows.map(r => String(r[labelField]).trim());
+    const seriesA = rows.map(r => parseNumber(r[seriesAField]));
+    const seriesB = rows.map(r => parseNumber(r[seriesBField]));
+
+    const ctx = document.getElementById('beforeAfterChart');
+    if (ctx) {
+      __charts.beforeAfter = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: prettifySeriesLabel(seriesAField, 'Indikator 1'),
+              data: seriesA,
+              backgroundColor: 'rgba(37, 99, 235, 0.28)',
+              borderColor: '#2563eb',
+              borderWidth: 1,
+            },
+            {
+              label: prettifySeriesLabel(seriesBField, 'Indikator 2'),
+              data: seriesB,
+              backgroundColor: 'rgba(17, 24, 39, 0.18)',
+              borderColor: 'rgba(17, 24, 39, 0.55)',
+              borderWidth: 1,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: 'Before vs After (perubahan indikator)' },
+            tooltip: { mode: 'index', intersect: false },
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    showChartError('beforeAfterChartWrap', e.message);
+  }
+
+  try {
+    const abrasi = await loadCsv('ee-chart (2).csv');
+    const fields = (abrasi.meta && abrasi.meta.fields) ? abrasi.meta.fields : [];
+    const labelField = fields[0] || '';
+    const valueField = fields[1];
+
+    const rows = (abrasi.data || []).filter(r => r && (r[labelField] || r[valueField] !== undefined));
+    const labels = rows.map(r => String(r[labelField]).trim());
+    const values = rows.map(r => parseNumber(r[valueField]));
+
+    const ctx = document.getElementById('abrasiChart');
+    if (ctx) {
+      __charts.abrasi = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Luas',
+              data: values,
+              backgroundColor: ['rgba(17, 24, 39, 0.20)', 'rgba(37, 99, 235, 0.24)'],
+              borderColor: ['rgba(17, 24, 39, 0.55)', '#2563eb'],
+              borderWidth: 1,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Abrasi vs Akresi' },
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    showChartError('abrasiChartWrap', e.message);
+  }
+}
+
 function fetchAndRenderData() {
   fetch('data.json')
     .then(res => res.json())
@@ -131,93 +758,267 @@ function renderParagraphs(paragraphs) {
 function renderContent(data) {
   const container = document.getElementById('content-container');
 
-  container.innerHTML = `
-    <div class="box">
-      <h1>${data.home.title}</h1>
-      <p><b>Lokasi:</b> ${data.home.location}</p>
-      <p>${data.home.description}</p>
-    </div>
+  const homeTitleRaw = Array.isArray(data.home?.title) ? data.home.title.join(' ') : (data.home?.title ?? '');
+  const homeTitleClean = String(homeTitleRaw ?? '').trim();
+  const homeTitle = (!homeTitleClean || homeTitleClean.toLowerCase() === 'home')
+    ? (document.title || 'Home')
+    : homeTitleClean;
 
-    <div class="box">
+  container.innerHTML = `
+    <section class="box" data-section id="home">
+      <h1>${homeTitle}</h1>
+      <p>${data.home.description}</p>
+    </section>
+
+    <section class="box" data-section id="background">
       <h2>${data.background.title}</h2>
       ${renderParagraphs(data.background.paragraphs)}
       <h2>${data.background.whyImportantTitle}</h2>
       ${renderList('', data.background.whyImportant)}
-    </div>
+    </section>
 
-    <div class="box">
+    <section class="box" data-section id="data-methods">
       <h2>${data.dataMethods.title}</h2>
-      ${renderList(data.dataMethods.dataUsedTitle, data.dataMethods.dataUsed)}
-      ${renderList(data.dataMethods.methodUsedTitle, data.dataMethods.methodUsed)}
-    </div>
+      <div class="two-col">
+        <div class="col">
+          ${renderList(data.dataMethods.dataUsedTitle, data.dataMethods.dataUsed)}
+        </div>
+        <div class="col">
+          ${renderList(data.dataMethods.methodUsedTitle, data.dataMethods.methodUsed)}
+        </div>
+      </div>
+    </section>
 
-    <div class="box">
+    <section class="box" data-section id="hasil">
       <h2>${data.hasil.title}</h2>
 
       <h3>${data.hasil.mapTitle}</h3>
       <div id="map"></div>
 
-      <h3>${data.hasil.timeSeriesTitle}</h3>
-      <p>${data.hasil.timeSeriesDesc}</p>
-      <img src="image/ee-chart.png" style="width:100%; border-radius:10px; margin-top:10px;">
-      <img src="image/ee-chart (1).png" style="width:100%; border-radius:10px; margin-top:10px;">
-
+      <div>
+        <h3>${data.hasil.timeSeriesTitle}</h3>
+        <p>${data.hasil.timeSeriesDesc}</p>
+        <div id="ndwiChartWrap" class="chart-wrap"><canvas id="ndwiChart"></canvas></div>
+      </div>
+      
       <h3>${data.hasil.perubahanTitle}</h3>
       <p>${data.hasil.perubahanDesc}</p>
-      <img src="image/ee-chart (2).png" style="width:100%; border-radius:10px; margin-top:10px;">
-    </div>
+      <div id="abrasiChartWrap" class="chart-wrap"><canvas id="abrasiChart"></canvas></div>
+      <div id="beforeAfterChartWrap" class="chart-wrap"><canvas id="beforeAfterChart"></canvas></div>
+    </section>
 
-    <div class="box">
+    <section class="box" data-section id="discussion">
       <h2>${data.discussion.title}</h2>
       ${renderParagraphs(data.discussion.paragraphs)}
-    </div>
 
-    <div class="box">
+      ${data.discussion?.humanActivities?.description ? `
+        <details>
+          <summary>${data.discussion.humanActivities.title || 'Kaitan dengan Aktivitas Manusia'}</summary>
+          ${renderParagraphs(data.discussion.humanActivities.description)}
+        </details>
+      ` : ''}
+
+      ${data.discussion?.conflictsAndChallenges?.description ? `
+        <details>
+          <summary>${data.discussion.conflictsAndChallenges.title || 'Konflik & Tantangan'}</summary>
+          ${renderParagraphs(data.discussion.conflictsAndChallenges.description)}
+        </details>
+      ` : ''}
+      <p>
+        <a class="read-more" href="https://rindang.id/2025/10/13/teluk-yang-berubah-menakar-kondisi-pesisir-palu-pascatsunami/" target="_blank" rel="noopener noreferrer">Contoh Kasus</a>
+      </p>
+    </section>
+
+    <section class="box" data-section id="conclusion">
       <h2>${data.conclusion.title}</h2>
       ${renderParagraphs(data.conclusion.paragraphs)}
-    </div>
 
-    <div class="box">
+      ${data.conclusion?.recommendations?.length ? `
+        <details>
+          <summary>${data.conclusion.recommendationsTitle || 'Rekomendasi'}</summary>
+          ${renderList('', data.conclusion.recommendations)}
+        </details>
+      ` : ''}
+    </section>
+
+    <section class="box" data-section id="geoai">
       <h2>${data.geoAI.title}</h2>
       ${renderParagraphs(data.geoAI.role.description)}
-    </div>
+    </section>
   `;
 
   setTimeout(() => {
     initMap(data);
-    animateOnScroll();
+    initCharts();
+    setupReveal();
+    updateScrollUI();
+    enableSpotlight();
+    enableInteractiveBoxes();
+    setupToc();
   }, 100);
 }
 
 function initMap(data) {
   document.getElementById('map').innerHTML = `
-    <iframe src="${data.hasil.geeAppUrl}" 
-      style="width:100%; height:550px; border:none;">
-    </iframe>
+    <iframe src="${data.hasil.geeAppUrl}" style="border:none;"></iframe>
   `;
 }
 
 function scrollToContent() {
   document.querySelector('.container').scrollIntoView({
-    behavior: 'smooth'
+    behavior: prefersReducedMotion() ? 'auto' : 'smooth'
   });
 }
 
-window.addEventListener('scroll', () => {
+function clamp01(n) {
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(1, n));
+}
+
+function updateScrollUI() {
   const arrow = document.querySelector('.scroll-down');
-  arrow.style.opacity = window.scrollY > 100 ? 0 : 1;
-});
+  if (arrow) arrow.style.opacity = window.scrollY > 100 ? 0 : 1;
 
-function animateOnScroll() {
-  document.querySelectorAll('.box').forEach((box, i) => {
-    const rect = box.getBoundingClientRect();
-    if (rect.top < window.innerHeight - 100) {
-      setTimeout(() => box.classList.add('show'), i * 100);
-    }
+  const progressEl = document.getElementById('scrollProgressBar');
+  const toTopBtn = document.getElementById('toTopBtn');
+
+  const doc = document.documentElement;
+  const maxScroll = Math.max(1, doc.scrollHeight - doc.clientHeight);
+  const p = clamp01(window.scrollY / maxScroll);
+
+  if (progressEl) progressEl.style.width = `${(p * 100).toFixed(2)}%`;
+  if (toTopBtn) {
+    if (window.scrollY > 420) toTopBtn.classList.add('show');
+    else toTopBtn.classList.remove('show');
+  }
+}
+
+function setupToTop() {
+  const btn = document.getElementById('toTopBtn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    });
   });
 }
 
-window.addEventListener('scroll', animateOnScroll);
+function setupReveal() {
+  if (__revealObserver) {
+    try { __revealObserver.disconnect(); } catch (_) {}
+    __revealObserver = null;
+  }
+
+  const boxes = Array.from(document.querySelectorAll('.box'));
+  if (!boxes.length) return;
+
+  if (prefersReducedMotion()) {
+    boxes.forEach((box) => box.classList.add('show'));
+    return;
+  }
+
+  boxes.forEach((box, i) => { box.dataset.revealIndex = String(i); });
+
+  __revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const box = entry.target;
+      const i = Number(box.dataset.revealIndex || 0);
+      window.setTimeout(() => box.classList.add('show'), i * 90);
+      __revealObserver && __revealObserver.unobserve(box);
+    });
+  }, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -10% 0px'
+  });
+
+  boxes.forEach((box) => __revealObserver.observe(box));
+}
+
+function setupToc() {
+  const toc = document.getElementById('toc');
+  if (!toc) return;
+
+  const sections = Array.from(document.querySelectorAll('[data-section]'));
+  const items = sections
+    .map((section) => {
+      const id = section.id;
+      const titleEl = section.querySelector('h1, h2');
+      let label = titleEl ? titleEl.textContent.trim() : id;
+      if (id === 'home') {
+        label = document.title || label;
+      }
+      return { id, label };
+    })
+    .filter((it) => it.id && it.label);
+
+  toc.innerHTML = items
+    .map((it) => `<a href="#${encodeURIComponent(it.id)}" data-toc="${it.id}">${it.label}</a>`)
+    .join('');
+
+  // smooth scroll on click
+  toc.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', (ev) => {
+      const href = a.getAttribute('href') || '';
+      const id = href.startsWith('#') ? decodeURIComponent(href.slice(1)) : '';
+      const el = id ? document.getElementById(id) : null;
+      if (!el) return;
+      ev.preventDefault();
+      el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      history.pushState(null, '', `#${id}`);
+    });
+  });
+
+  // scrollspy
+  const linkById = new Map(
+    Array.from(toc.querySelectorAll('a')).map((a) => [a.getAttribute('data-toc'), a])
+  );
+
+  const clearActive = () => {
+    linkById.forEach((a) => a.classList.remove('active'));
+  };
+
+  if (prefersReducedMotion()) {
+    const first = items[0]?.id;
+    if (first && linkById.get(first)) linkById.get(first).classList.add('active');
+    return;
+  }
+
+  const spy = new IntersectionObserver((entries) => {
+    // pick the most visible intersecting section
+    const visible = entries
+      .filter((e) => e.isIntersecting)
+      .sort((a, b) => (b.intersectionRatio - a.intersectionRatio));
+    const top = visible[0];
+    if (!top) return;
+    const id = top.target.id;
+    if (!id) return;
+    clearActive();
+    const a = linkById.get(id);
+    if (a) a.classList.add('active');
+  }, {
+    threshold: [0.18, 0.28, 0.38, 0.5],
+    rootMargin: '-20% 0px -65% 0px'
+  });
+
+  sections.forEach((s) => spy.observe(s));
+}
+
+function setupBrandTitle() {
+  const brand = document.querySelector('.topbar .brand');
+  if (!brand) return;
+  const t = String(document.title || '').trim();
+  if (t) brand.textContent = t;
+}
+
+window.addEventListener('scroll', updateScrollUI, { passive: true });
+
+window.addEventListener('resize', updateScrollUI, { passive: true });
+
+setupToTop();
+updateScrollUI();
+setupBrandTitle();
 
 fetchAndRenderData();
 </script>
